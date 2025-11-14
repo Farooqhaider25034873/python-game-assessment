@@ -1,4 +1,4 @@
-# Final push —confirmed update
+# Final push — Farooq hadir confirmed update
 import tkinter as tk
 import random
 # GUI layout improved with better emoji variety
