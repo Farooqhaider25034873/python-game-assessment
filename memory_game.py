@@ -1,53 +1,70 @@
+# Final push —confirmed update
 import tkinter as tk
 import random
-
-class MemoryGame:
+# GUI layout improved with better emoji variety
+class ColorMatchGame:
     def __init__(self, root):
         self.root = root
-        self.root.title("Memory Match Game")
-        self.root.geometry("400x400")
-        self.symbols = ['🍎', '🍌', '🍇', '🍓'] * 2
-        random.shuffle(self.symbols)
-        self.buttons = []
-        self.revealed = []
-        self.matched = []
+        self.root.title("Color Match Reflex")
+        self.root.geometry("400x300")
         self.score = 0
-        self.create_grid()
+        self.colors = ['Red', 'Green', 'Blue', 'Yellow', 'Purple', 'Orange']
+        self.symbols = ['🍎', '🍌', '🍇', '🍓', '🍍', '🥝']
+        self.current_color = ''
+        self.current_symbol = ''
+        self.create_widgets()
+        self.next_round()
 
-    def create_grid(self):
-        for i in range(4):
-            for j in range(2):
-                index = i * 2 + j
-                btn = tk.Button(self.root, text="❓", font=("Arial", 24), width=4, height=2,
-                                command=lambda idx=index: self.reveal(idx))
-                btn.grid(row=i, column=j, padx=10, pady=10)
-                self.buttons.append(btn)
+    def create_widgets(self):
+        self.label = tk.Label(self.root, text="", font=("Arial", 24))
+        self.label.pack(pady=20)
 
-    def reveal(self, idx):
-        if idx in self.matched or idx in self.revealed:
-            return
-        self.buttons[idx].config(text=self.symbols[idx])
-        self.revealed.append(idx)
-        if len(self.revealed) == 2:
-            self.root.after(1000, self.check_match)
+        self.score_label = tk.Label(self.root, text="Score: 0", font=("Arial", 14))
+        self.score_label.pack()
 
-    def check_match(self):
-        i1, i2 = self.revealed
-        if self.symbols[i1] == self.symbols[i2]:
-            self.matched.extend([i1, i2])
+        self.buttons_frame = tk.Frame(self.root)
+        self.buttons_frame.pack(pady=10)
+
+        self.buttons = []
+        for color in self.colors:
+            btn = tk.Button(self.buttons_frame, text=color, width=10, command=lambda c=color: self.check_answer(c))
+            btn.pack(side=tk.LEFT, padx=5)
+            self.buttons.append(btn)
+
+        self.restart_btn = tk.Button(self.root, text="Restart", command=self.restart_game)
+        self.restart_btn.pack(pady=10)
+
+    def next_round(self):
+        self.current_color = random.choice(self.colors)
+        self.current_symbol = random.choice(self.symbols)
+        self.label.config(text=f"{self.current_symbol}", fg=self.current_color)
+
+    def check_answer(self, selected_color):
+        if selected_color == self.current_color:
             self.score += 1
+            self.score_label.config(text=f"Score: {self.score}")
+            if self.score >= 10:
+                self.show_win()
+            else:
+                self.next_round()
         else:
-            self.buttons[i1].config(text="❓")
-            self.buttons[i2].config(text="❓")
-        self.revealed.clear()
-        if len(self.matched) == len(self.symbols):
-            self.show_win()
+            self.score = 0
+            self.score_label.config(text="Score: 0")
+            self.next_round()
 
     def show_win(self):
-        win_label = tk.Label(self.root, text=f"You won! Score: {self.score}", font=("Arial", 16), fg="green")
-        win_label.grid(row=5, column=0, columnspan=2)
+        self.label.config(text="🎉 You Win!", fg="black")
+        for btn in self.buttons:
+            btn.config(state=tk.DISABLED)
+
+    def restart_game(self):
+        self.score = 0
+        self.score_label.config(text="Score: 0")
+        for btn in self.buttons:
+            btn.config(state=tk.NORMAL)
+        self.next_round()
 
 if __name__ == "__main__":
     root = tk.Tk()
-    game = MemoryGame(root)
+    game = ColorMatchGame(root)
     root.mainloop()
