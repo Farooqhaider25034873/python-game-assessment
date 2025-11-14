@@ -3,7 +3,7 @@
 ## 📋 Overview
 A simple memory game built with Python and Tkinter. Match pairs of emojis to win.
 
-#  🎮 How to Play
+##  🎮 How to Play
 - Click on two cards to reveal them
 - If they match, they stay open
 - If not, they flip back
